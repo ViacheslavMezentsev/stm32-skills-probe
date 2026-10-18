@@ -17,6 +17,8 @@
   прошивки и HIL для трёх плат; отладка на плате (OpenOCD, ST-LINK GDB Server, J-Link) и в Renode через GDB.
   `tools/check_vscode.py` сверяет задачи с пресетами, целями и файлами (CI, задание format).
 - Цель `emulate-monitor`: зонд работает в Renode, монитор на порту `PROBE_RENODE_MONITOR_PORT` (1234).
+- Копия stm32-diag-record обновлена до 1.3.0: доктор для любых пробников OpenOCD, синтаксис полей и раздел
+  «Другие MCU» в SKILL.md; поля зонда записаны в форме `&probe_telemetry.поле`.
 - Копия навыка stm32-diag-record 1.2.0 в `.claude/skills/` и поля зонда без `svd:` (`tools/diag-fields.toml`);
   CI записывает mcap из Renode для каждой платы.
 - Опция `PROBE_EXIT_MS` (вместе с `PROBE_LOG_SEMIHOSTING`): семихостинг `SYS_EXIT` через заданное время, чтобы

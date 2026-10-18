@@ -12,7 +12,7 @@
 topic = "/probe/frames"
 message = "std_msgs/UInt32"
 kind = "uint32"
-expr = "(char*)&probe_telemetry + (long)&((ProbeTelemetry*)0)->frames"
+expr = "&probe_telemetry.frames"
 
 [[field]]
 topic = "/probe/tick_ms"
@@ -30,7 +30,7 @@ expr = "&platform_tick"
 topic = "/probe/sine_milli"
 message = "std_msgs/Int32"
 kind = "int32"
-expr = "(char*)&probe_telemetry + (long)&((ProbeTelemetry*)0)->sine_milli"
+expr = "&probe_telemetry.sine_milli"
 min = -1000
 max = 1000
 
@@ -38,7 +38,7 @@ max = 1000
 topic = "/probe/ramp"
 message = "std_msgs/Float32"
 kind = "float32"
-expr = "(char*)&probe_telemetry + (long)&((ProbeTelemetry*)0)->ramp"
+expr = "&probe_telemetry.ramp"
 min = 0.0
 max = 1.0
 
@@ -46,7 +46,7 @@ max = 1.0
 topic = "/probe/work_cycles"
 message = "std_msgs/UInt32"
 kind = "uint32"
-expr = "(char*)&probe_telemetry + (long)&((ProbeTelemetry*)0)->work_cycles"
+expr = "&probe_telemetry.work_cycles"
 
 [[field]]
 topic = "/probe/loop_counter"
