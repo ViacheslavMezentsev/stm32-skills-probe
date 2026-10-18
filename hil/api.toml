@@ -1,0 +1,25 @@
+# Параметры API и сценариев HIL зонда, общие для всех плат (stm32-gdbtest, схема 1).
+# Сценарии читают раздел [user] через t.profile.get("user.<раздел>.<ключ>").
+schema = 1
+
+# Цепочки кадров короткие: обработчик SysTick, probe_loop() -> main().
+[frames]
+limit = 8
+
+[records]
+max_records = 64
+
+# Расписание зонда по умолчанию (src/probe.cpp): кадр каждые 100 мс, участок известной длины
+# каждые 1000 мс по 4000 итераций. Остановки GDB замораживают SysTick вместе с ядром, поэтому
+# интервал в тиках между соседними кадрами равен периоду с точностью до одного тика.
+[user.schedule]
+frame_period_ms = 100
+work_period_ms = 1000
+work_iterations = 4000
+tick_tolerance = 1
+
+# Блок RTT (src/rtt.h): размеры буферов и строка поиска.
+[user.rtt]
+id = "SEGGER RTT"
+up_size = 1024
+down_size = 64

@@ -1,0 +1,11 @@
+# Отладка зонда в Renode: журнал USART1 в файл, GDB-сервер на 3334, ядро стоит на точке входа.
+#   arm-none-eabi-gdb build/<пресет>/stm32_skills_probe.elf -ex "target remote :3334"
+mach create "probe"
+machine LoadPlatformDescription @@RENODE_MODEL@
+sysbus.usart1 CreateFileBackend @@RENODE_LOG@ true
+macro reset
+"""
+    sysbus LoadELF @@RENODE_ELF@
+"""
+runMacro $reset
+machine StartGdbServer 3334

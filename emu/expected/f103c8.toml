@@ -1,0 +1,22 @@
+# Ожидания к стартовому логу зонда F103C8 для check_startup_log.py навыка stm32-renode-emulator
+# (demo-stm32-skills): python3 <навык>/scripts/check_startup_log.py --log uart.log --elf <elf> --expected <этот файл>.
+# Подходит для эмулятора и для платы: тактирование не проверяется (HSE на плате, HSI в эмуляторе).
+emulator = "renode"
+machine = "F103C8"
+
+min_lines = 9
+first_line = "^boot: start$"
+
+[require]
+lines = [
+    "^board: F103C8$",
+    "^CPU: Cortex-M3 \\(CPUID 0x410FC23[0-9A-F]\\)$",
+    "^clock: (HSE|HSI) [0-9]+ Hz",
+    "^Firmware: v{version} build {build}\\.{revision}$",
+    "^rtt: _SEGGER_RTT at 0x2000[0-9A-F]{4} up=1024 down=64$",
+    "^boot: done$",
+    "^frame 1 tick=",
+]
+
+[forbid]
+lines = ["Cortex-M7", "Cortex-M\\?", "^error:"]

@@ -1,0 +1,32 @@
+// Модель Renode для зонда на STM32F411CE и STM32F401CC (BlackPill): ядро, память, SysTick, USART1.
+// Периферия, в которую зонд только пишет настройки (RCC, Flash, GPIO, TIM1), — заглушки из памяти:
+// бит HSERDY не выставляется, поэтому зонд работает от HSI 16 МГц (в логе "HSE timeout").
+// Объём памяти — по F411CE (512/128 КиБ); прошивка F401CC (256/64 КиБ) в нём помещается.
+// Подход — как в stm32-hwtest-bluepill (emu/renode/stm32f103.repl).
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m4"
+    nvic: nvic
+nvic: IRQControllers.NVIC @ sysbus 0xE000E000
+    -> cpu@0
+    priorityMask: 0xF0
+    systickFrequency: 16000000
+flash: Memory.MappedMemory @ sysbus 0x08000000
+    size: 0x80000
+sram: Memory.MappedMemory @ sysbus 0x20000000
+    size: 0x20000
+usart1: UART.STM32_UART @ sysbus <0x40011000, +0x400>
+    -> nvic@37
+tim1: Memory.MappedMemory @ sysbus 0x40010000
+    size: 0x400
+gpioa: Memory.MappedMemory @ sysbus 0x40020000
+    size: 0x400
+gpiob: Memory.MappedMemory @ sysbus 0x40020400
+    size: 0x400
+gpioc: Memory.MappedMemory @ sysbus 0x40020800
+    size: 0x400
+rcc: Memory.MappedMemory @ sysbus 0x40023800
+    size: 0x400
+flash_ctrl: Memory.MappedMemory @ sysbus 0x40023C00
+    size: 0x400
+dbgmcu: Memory.MappedMemory @ sysbus 0xE0042000
+    size: 0x400

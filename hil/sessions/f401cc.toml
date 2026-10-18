@@ -1,0 +1,12 @@
+# Конфигурация прогона HIL зонда для F401CC (SESSION_CONFIG в cmake/hil.cmake). Пути — относительно файла.
+[config]
+target = "../profiles/f401cc.toml"
+api = "../api.toml"
+
+# Файлы данных проекта: t.profile.data["board"].
+[data]
+board = "../boards/f401cc.toml"
+
+# Неизменяемые свидетельства каждой попытки DDTT.
+[results]
+capture = true

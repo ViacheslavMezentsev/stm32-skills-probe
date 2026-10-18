@@ -1,0 +1,28 @@
+/* Скрипт компоновщика зонда (MIT). Flash и RAM подставляет cmake/probe.cmake из BOARD. */
+ENTRY(Reset_Handler)
+
+MEMORY
+{
+    FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = @FLASH_SIZE@
+    RAM   (rwx) : ORIGIN = 0x20000000, LENGTH = @RAM_SIZE@
+}
+
+_estack = ORIGIN(RAM) + LENGTH(RAM);
+
+SECTIONS
+{
+    .isr_vector : { KEEP(*(.isr_vector)) } > FLASH
+    .text : { *(.text*) *(.rodata*) . = ALIGN(4); } > FLASH
+    .ARM.exidx : { *(.ARM.exidx*) } > FLASH
+    /* Версия сборки для проверки стартового лога (stm32-renode-emulator, check_startup_log.py). */
+    .fw_version : { KEEP(*(.fw_version)) . = ALIGN(4); } > FLASH
+    .data : { . = ALIGN(4); _sdata = .; *(.data*) . = ALIGN(4); _edata = .; } > RAM AT > FLASH
+    _sidata = LOADADDR(.data);
+    .bss (NOLOAD) : { . = ALIGN(4); _sbss = .; *(.bss*) *(COMMON) . = ALIGN(4); _ebss = .; } > RAM
+    /* Управляющий блок RTT и его буферы: отдельная секция, адрес виден в .map и по символу _SEGGER_RTT. */
+    .rtt (NOLOAD) : { . = ALIGN(8); KEEP(*(.rtt*)) . = ALIGN(4); _ertt = .; } > RAM
+}
+
+/* Верхние 8 КиБ RAM не заняты данными: стек (растёт вниз от _estack) и свободное окно, куда
+   stm32-rtt-console может внедрить свой блок RTT (на F411 — 0x2001E000..0x2001F600). */
+ASSERT(_ertt <= _estack - 8K, "probe: data and RTT buffers overlap the top 8 KiB of RAM")

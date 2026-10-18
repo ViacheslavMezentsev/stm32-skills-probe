@@ -1,0 +1,24 @@
+schema = 2
+name = "f401cc"
+mcu = "STM32F401CCU6"
+openocd_target = "target/stm32f4x.cfg"
+flash_start = 0x08000000
+flash_size = 262144
+flash_size_address = 0x1FFF7A22
+breakpoint_limit = 6
+fault_handlers = ["HardFault_Handler", "MemManage_Handler", "BusFault_Handler", "UsageFault_Handler"]
+core_registers = ["pc", "lr", "sp", "xPSR"]
+
+[identity]
+address = 0xE0042000
+mask = 0xFFF
+value = 0x423
+
+[diagnostic_registers]
+CFSR = 0xE000ED28
+HFSR = 0xE000ED2C
+
+# OpenOCD reset commands; other backends use their own defaults.
+[openocd]
+reset_halt = "monitor reset halt"
+reset_run = "monitor reset run"

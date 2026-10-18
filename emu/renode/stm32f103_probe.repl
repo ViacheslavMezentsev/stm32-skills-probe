@@ -1,0 +1,32 @@
+// Модель Renode для зонда на STM32F103C8 (Blue Pill): ядро, память, SysTick, USART1.
+// Заглушки из памяти для RCC, Flash, GPIO, AFIO, TIM1: HSE не запускается, зонд работает от HSI 8 МГц.
+// Основа — emu/renode/stm32f103.repl из stm32-hwtest-bluepill.
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m3"
+    nvic: nvic
+nvic: IRQControllers.NVIC @ sysbus 0xE000E000
+    -> cpu@0
+    priorityMask: 0xF0
+    systickFrequency: 8000000
+flash: Memory.MappedMemory @ sysbus 0x08000000
+    size: 0x10000
+sram: Memory.MappedMemory @ sysbus 0x20000000
+    size: 0x5000
+usart1: UART.STM32_UART @ sysbus <0x40013800, +0x400>
+    -> nvic@37
+afio: Memory.MappedMemory @ sysbus 0x40010000
+    size: 0x400
+gpioa: Memory.MappedMemory @ sysbus 0x40010800
+    size: 0x400
+gpiob: Memory.MappedMemory @ sysbus 0x40010C00
+    size: 0x400
+gpioc: Memory.MappedMemory @ sysbus 0x40011000
+    size: 0x400
+tim1: Memory.MappedMemory @ sysbus 0x40012C00
+    size: 0x400
+rcc: Memory.MappedMemory @ sysbus 0x40021000
+    size: 0x400
+flash_ctrl: Memory.MappedMemory @ sysbus 0x40022000
+    size: 0x400
+dbgmcu: Memory.MappedMemory @ sysbus 0xE0042000
+    size: 0x400

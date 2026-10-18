@@ -1,0 +1,29 @@
+# Файл данных платы для сценариев HIL зонда: t.profile.data["board"].
+[board]
+name = "F103C8"
+title = "Blue Pill"
+# Макрос устройства CMSIS, с которым собрана прошивка (cmake/probe.cmake).
+device = "STM32F103xB"
+ram_kib = 20
+# Светодиод PC13, горит при низком уровне; мигает раз в секунду вместе с участком известной длины.
+led_port = "GPIOC"
+led_pin = 13
+led_active_high = false
+
+# Тактирование без PLL: кварц платы (HSE) или, если он не запустился, HSI.
+[clock]
+hse_hz = 8000000
+hsi_hz = 8000000
+
+# USART1 115200 8N1: TX PA9, RX PA10. Регистр данных — периферия, его нельзя читать как память.
+[uart]
+baud = 115200
+data_register = 0x40013804
+
+# Отладочные выводы зонда на порту B (src/platform.h).
+[pins]
+isr = 12
+work = 13
+gate = 14
+frame = 15
+sample = 0

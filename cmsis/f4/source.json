@@ -1,0 +1,57 @@
+{
+  "package": "STM32CubeF4 V1.28.3",
+  "unchanged_headers": [
+    {
+      "file": "Core/Include/cmsis_armcc.h",
+      "sha256": "5bc0d7ed8e36e9bcb868c4042fff350c702eca305df4162fb00384789e35ee1c"
+    },
+    {
+      "file": "Core/Include/cmsis_armclang.h",
+      "sha256": "d5da2b48204f0d0cf1ff38ffccb527e5706cd0a091ff0a331eb41d6596c33fe5"
+    },
+    {
+      "file": "Core/Include/cmsis_armclang_ltm.h",
+      "sha256": "3e8ffb284f4f155de3ea93841cca853b41d5e812b53e52c64c3d4a67b7f1ec7c"
+    },
+    {
+      "file": "Core/Include/cmsis_compiler.h",
+      "sha256": "b51963d271c1571ca3463654c76aa7ea50c4eac5d0a2710df10414ac64d9e0f8"
+    },
+    {
+      "file": "Core/Include/cmsis_gcc.h",
+      "sha256": "43bfd1fe69fbbc2ca70aaf7d43cc3e20f16e0c7f66e1bdef9b51af6dc14b2617"
+    },
+    {
+      "file": "Core/Include/cmsis_iccarm.h",
+      "sha256": "2d255c8429e507e52cb603f2970bed4cc4a6cdcc3eb7fc7997385abad7364837"
+    },
+    {
+      "file": "Core/Include/cmsis_version.h",
+      "sha256": "184c19fd3ee73632edf35a0b4d49cd48be75fbf49e6ccb19d9db05fa83bea4b3"
+    },
+    {
+      "file": "Core/Include/core_cm4.h",
+      "sha256": "f5b63d52dd1557b15ca414cb59c264f595a7b5669db2a5878dffe22f4caedc8c"
+    },
+    {
+      "file": "Core/Include/mpu_armv7.h",
+      "sha256": "29206b52ee02290ed6f5a5415ebd4187de802cf176d9b3cb844390d8e5571372"
+    },
+    {
+      "file": "Device/Include/stm32f401xc.h",
+      "sha256": "23a7444ad849329e69079fed1b5278bcba03f35dff22e480fa17a0ede90ad967"
+    },
+    {
+      "file": "Device/Include/stm32f411xe.h",
+      "sha256": "fc97c0ca8982da2139064fb0e97c7c60d5473edee354170912007341dc822f43"
+    },
+    {
+      "file": "Device/Include/stm32f4xx.h",
+      "sha256": "a19edea6b2f4df2ab3c567782c4d313a52319c4303bd56ad7dd1d0e077014657"
+    },
+    {
+      "file": "Device/Include/system_stm32f4xx.h",
+      "sha256": "02c067d5a135f540c03215dc834b1e60a97bbd4e55bfd3994b0c82a15ea3012a"
+    }
+  ]
+}

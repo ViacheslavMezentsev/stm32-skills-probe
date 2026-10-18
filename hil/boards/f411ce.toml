@@ -1,0 +1,29 @@
+# Файл данных платы для сценариев HIL зонда: t.profile.data["board"].
+[board]
+name = "F411CE"
+title = "WeAct BlackPill F411CE"
+# Макрос устройства CMSIS, с которым собрана прошивка (cmake/probe.cmake).
+device = "STM32F411xE"
+ram_kib = 128
+# Светодиод PC13, горит при низком уровне; мигает раз в секунду вместе с участком известной длины.
+led_port = "GPIOC"
+led_pin = 13
+led_active_high = false
+
+# Тактирование без PLL: кварц платы (HSE) или, если он не запустился, HSI.
+[clock]
+hse_hz = 25000000
+hsi_hz = 16000000
+
+# USART1 115200 8N1: TX PA9, RX PA10. Регистр данных — периферия, его нельзя читать как память.
+[uart]
+baud = 115200
+data_register = 0x40011004
+
+# Отладочные выводы зонда на порту B (src/platform.h).
+[pins]
+isr = 12
+work = 13
+gate = 14
+frame = 15
+sample = 0

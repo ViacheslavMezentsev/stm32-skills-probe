@@ -1,0 +1,321 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "toolchainFile": "${sourceDir}/cmake/arm-gcc.cmake",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "PROBE_HIL": "OFF",
+        "PROBE_RENODE_TEST": "OFF"
+      },
+      "description": "CMake и CMSIS без HAL. ARM_TOOLCHAIN_ROOT или PATH; Renode — RENODE_BINARY или PATH."
+    },
+    {
+      "name": "f411ce-debug",
+      "displayName": "Debug (WeAct BlackPill F411CE)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F411CE",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "PROBE_RENODE_TEST": "ON"
+      }
+    },
+    {
+      "name": "f411ce-release",
+      "displayName": "Release (WeAct BlackPill F411CE)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F411CE",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "f411ce-hil",
+      "displayName": "HIL (WeAct BlackPill F411CE)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F411CE",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "PROBE_HIL": "ON"
+      }
+    },
+    {
+      "name": "f401cc-debug",
+      "displayName": "Debug (WeAct BlackPill F401CC)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F401CC",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "PROBE_RENODE_TEST": "ON"
+      }
+    },
+    {
+      "name": "f401cc-release",
+      "displayName": "Release (WeAct BlackPill F401CC)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F401CC",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "f401cc-hil",
+      "displayName": "HIL (WeAct BlackPill F401CC)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F401CC",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "PROBE_HIL": "ON"
+      }
+    },
+    {
+      "name": "f103c8-debug",
+      "displayName": "Debug (Blue Pill F103C8)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F103C8",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "PROBE_RENODE_TEST": "ON"
+      }
+    },
+    {
+      "name": "f103c8-release",
+      "displayName": "Release (Blue Pill F103C8)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F103C8",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "f103c8-hil",
+      "displayName": "HIL (Blue Pill F103C8)",
+      "inherits": "base",
+      "cacheVariables": {
+        "BOARD": "F103C8",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "PROBE_HIL": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "f411ce-debug",
+      "configurePreset": "f411ce-debug"
+    },
+    {
+      "name": "f411ce-release",
+      "configurePreset": "f411ce-release"
+    },
+    {
+      "name": "f411ce-hil",
+      "configurePreset": "f411ce-hil"
+    },
+    {
+      "name": "f401cc-debug",
+      "configurePreset": "f401cc-debug"
+    },
+    {
+      "name": "f401cc-release",
+      "configurePreset": "f401cc-release"
+    },
+    {
+      "name": "f401cc-hil",
+      "configurePreset": "f401cc-hil"
+    },
+    {
+      "name": "f103c8-debug",
+      "configurePreset": "f103c8-debug"
+    },
+    {
+      "name": "f103c8-release",
+      "configurePreset": "f103c8-release"
+    },
+    {
+      "name": "f103c8-hil",
+      "configurePreset": "f103c8-hil"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "f411ce-debug-emulator",
+      "configurePreset": "f411ce-debug",
+      "displayName": "F411CE: Renode, без платы",
+      "filter": {
+        "include": {
+          "label": "^emu$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      }
+    },
+    {
+      "name": "f411ce-hil-host",
+      "configurePreset": "f411ce-hil",
+      "displayName": "F411CE: traceability и prepare, без платы",
+      "filter": {
+        "include": {
+          "label": "^host$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      },
+      "environment": {
+        "STM32_GDBTEST_IDENTITY_POLICY": "strict"
+      }
+    },
+    {
+      "name": "f411ce-hil-hw",
+      "configurePreset": "f411ce-hil",
+      "displayName": "F411CE: сценарии на плате (hil/stands/f411ce.local.toml)",
+      "filter": {
+        "include": {
+          "label": "^hw$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      },
+      "environment": {
+        "STM32_GDBTEST_STAND": "${sourceDir}/hil/stands/f411ce.local.toml"
+      }
+    },
+    {
+      "name": "f401cc-debug-emulator",
+      "configurePreset": "f401cc-debug",
+      "displayName": "F401CC: Renode, без платы",
+      "filter": {
+        "include": {
+          "label": "^emu$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      }
+    },
+    {
+      "name": "f401cc-hil-host",
+      "configurePreset": "f401cc-hil",
+      "displayName": "F401CC: traceability и prepare, без платы",
+      "filter": {
+        "include": {
+          "label": "^host$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      },
+      "environment": {
+        "STM32_GDBTEST_IDENTITY_POLICY": "strict"
+      }
+    },
+    {
+      "name": "f401cc-hil-hw",
+      "configurePreset": "f401cc-hil",
+      "displayName": "F401CC: сценарии на плате (hil/stands/f401cc.local.toml)",
+      "filter": {
+        "include": {
+          "label": "^hw$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      },
+      "environment": {
+        "STM32_GDBTEST_STAND": "${sourceDir}/hil/stands/f401cc.local.toml"
+      }
+    },
+    {
+      "name": "f103c8-debug-emulator",
+      "configurePreset": "f103c8-debug",
+      "displayName": "F103C8: Renode, без платы",
+      "filter": {
+        "include": {
+          "label": "^emu$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      }
+    },
+    {
+      "name": "f103c8-hil-host",
+      "configurePreset": "f103c8-hil",
+      "displayName": "F103C8: traceability и prepare, без платы",
+      "filter": {
+        "include": {
+          "label": "^host$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      },
+      "environment": {
+        "STM32_GDBTEST_IDENTITY_POLICY": "strict"
+      }
+    },
+    {
+      "name": "f103c8-hil-hw",
+      "configurePreset": "f103c8-hil",
+      "displayName": "F103C8: сценарии на плате (hil/stands/f103c8.local.toml)",
+      "filter": {
+        "include": {
+          "label": "^hw$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "jobs": 1
+      },
+      "environment": {
+        "STM32_GDBTEST_STAND": "${sourceDir}/hil/stands/f103c8.local.toml"
+      }
+    }
+  ]
+}

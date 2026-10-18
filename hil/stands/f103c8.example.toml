@@ -1,0 +1,8 @@
+# Пример стенда для F103C8: скопируйте в hil/stands/f103c8.local.toml (файл не попадает в git)
+# и укажите серийный номер своего пробника.
+[probe]
+backend = "openocd"
+serial = "REPLACE_WITH_STLINK_SERIAL"
+executable = "openocd"
+speed_khz = 1000
+flash = "if-different"

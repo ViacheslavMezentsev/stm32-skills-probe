@@ -1,0 +1,8 @@
+build/
+modules/*/
+!modules/.gitkeep
+hil/stands/*.local.toml
+*.local.toml
+__pycache__/
+*.py[cod]
+.vscode/*.log
