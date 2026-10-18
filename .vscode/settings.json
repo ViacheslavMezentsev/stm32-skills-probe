@@ -1,0 +1,32 @@
+{
+    // CMake Tools: presets, Ninja/ARM GCC; do not activate MSVC.
+    "cmake.useCMakePresets": "always",
+    "cmake.useVsDeveloperEnvironment": "never",
+    "cmake.copyCompileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "cmake.ctest.testExplorerIntegrationEnabled": true,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "cSpell.ignoreRegExpList": ["\\b[0-9A-Z_]+\\b"],
+    // Manual debugger settings are independent of the configure preset.
+    // On Linux change toolchain to ${env:HOME}/xpack-arm-none-eabi-gcc-14.2.1-1.1.
+    "toolchain": "${env:USERPROFILE}/xpack-arm-none-eabi-gcc-14.2.1-1.1",
+    "executable": "${command:cmake.buildDirectory}/stm32_skills_probe.elf",
+    // Плата активного пресета: F411CE — STM32F411CE и stm32f4x, F401CC — STM32F401CC и stm32f4x,
+    // F103C8 — STM32F103C8 и stm32f1x.
+    "device": "STM32F411CE",
+    "targetFamily": "stm32f4x",
+    // SVD для отладчика и полей svd: в записи диагностики (например, из STM32CubeCLT); пусто — без них.
+    "svdFile": "",
+    "cortex-debug.gdbPath.windows": "${config:toolchain}/bin/arm-none-eabi-gdb.exe",
+    "cortex-debug.gdbPath.linux": "${config:toolchain}/bin/arm-none-eabi-gdb",
+    "cortex-debug.openocdPath.windows": "openocd.exe",
+    "cortex-debug.openocdPath.linux": "openocd",
+    "cortex-debug.JLinkGDBServerPath.windows": "JLinkGDBServerCL.exe",
+    "cortex-debug.JLinkGDBServerPath.linux": "JLinkGDBServerCLExe",
+    "cortex-debug.stlinkPath.windows": "ST-LINK_gdbserver.exe",
+    "cortex-debug.variableUseNaturalFormat": true,
+    "hil.gdbtest": "modules/stm32-gdbtest",
+    // Запись диагностики (навык stm32-diag-record): копия навыка и поля зонда без svd:.
+    "diag.skill": ".claude/skills/stm32-diag-record",
+    "diag.fields": "tools/diag-fields.toml",
+    "diag.renodePort": "1234"
+}

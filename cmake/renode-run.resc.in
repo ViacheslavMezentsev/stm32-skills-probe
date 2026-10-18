@@ -1,0 +1,8 @@
+# Зонд работает в Renode: журнал USART1 в файл, монитор доступен по telnet на порту из --port
+# (цель emulate-monitor, по умолчанию 1234). Так поля читает stm32-diag-record --backend renode:
+#   python .claude/skills/stm32-diag-record/scripts/record_diag.py --backend renode --elf build/<пресет>/stm32_skills_probe.elf
+mach create "probe"
+machine LoadPlatformDescription @@RENODE_MODEL@
+sysbus.usart1 CreateFileBackend @@RENODE_RUN_LOG@ true
+sysbus LoadELF @@RENODE_ELF@
+start

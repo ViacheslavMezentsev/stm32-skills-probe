@@ -17,9 +17,10 @@
 | `cmake/`, `ld/` | toolchain, выбор платы (`probe.cmake`), эмуляция, HIL, шаблон компоновщика |
 | `emu/` | модели Renode и ожидания к стартовому логу |
 | `hil/` | HIL stm32-gdbtest по образцу stm32-hwtest-bluepill: `common/tests/`, `<ПЛАТА>/` (`session.toml`, `target.toml`, `board.toml`, `stands/`), `templates/`, `api.toml` |
-| `tools/` | дымовой тест в Renode |
+| `tools/` | дымовой тест в Renode, проверка `.vscode` (`check_vscode.py`), поля записи диагностики |
+| `.vscode/` | задачи и конфигурации отладки по образцу stm32-hwtest-bluepill |
 | `modules/stm32-gdbtest` | подмодуль, v0.4.1 |
-| `.claude/skills/` | копии навыков stm32-gdbtest из подмодуля; обновлять вместе с ним |
+| `.claude/skills/` | копии навыков stm32-gdbtest из подмодуля (обновлять вместе с ним) и stm32-diag-record из demo-stm32-skills (обновлять с его выпусками) |
 
 ## Правила
 
@@ -29,7 +30,8 @@
    версию в `CMakeLists.txt`.
 3. Перед коммитом: сборка всех пресетов, `ctest --preset <плата>-debug-emulator`, `ctest --preset <плата>-hil-host`,
    `clang-format --dry-run --Werror src/*.c src/*.cpp src/*.h`,
-   `python modules/stm32-gdbtest/tests/host/test_scenario_style.py hil/common/tests/board/*.py`.
+   `python modules/stm32-gdbtest/tests/host/test_scenario_style.py hil/common/tests/board/*.py`,
+   `python tools/check_vscode.py`.
 4. Эмулятор не заменяет плату: в отчётах указывайте, что проверено в Renode или QEMU, а что на железе.
 5. Не коммитьте серийные номера пробников (`hil/*/stands/local.toml` в `.gitignore`), персональные пути,
    прошивки, журналы прогонов и кэши.

@@ -7,5 +7,5 @@ way (timestamped log, numbered frames, typed variables, debug pins, a known-leng
 so measurements by different tools can be compared, repeated and published.
 
 Boards: `F411CE`, `F401CC` (WeAct BlackPill) and `F103C8` (Blue Pill); CMake and CMSIS only, stm32-gdbtest HIL
-scenarios in `hil/`, Renode models in `emu/`. The Russian [README](README.md) is the primary documentation:
+scenarios in `hil/`, Renode models in `emu/`, VS Code tasks and debug configurations in `.vscode/`. The Russian [README](README.md) is the primary documentation:
 pinout, log format, commands, symbols for tools and build presets.

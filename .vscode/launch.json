@@ -1,0 +1,62 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Плата: OpenOCD / ST-Link",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "openocd",
+      "cwd": "${workspaceFolder}",
+      "executable": "${config:executable}",
+      "device": "${config:device}",
+      "preLaunchTask": "Сборка: собрать (активный пресет)",
+      "runToEntryPoint": "main",
+      "svdFile": "${config:svdFile}",
+      "configFiles": [
+        "interface/stlink.cfg",
+        "target/${config:targetFamily}.cfg"
+      ]
+    },
+    {
+      "name": "Плата: ST-LINK GDB Server",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "stlink",
+      "cwd": "${workspaceFolder}",
+      "executable": "${config:executable}",
+      "device": "${config:device}",
+      "preLaunchTask": "Сборка: собрать (активный пресет)",
+      "runToEntryPoint": "main",
+      "svdFile": "${config:svdFile}",
+      "interface": "swd"
+    },
+    {
+      "name": "Плата: J-Link",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "jlink",
+      "cwd": "${workspaceFolder}",
+      "executable": "${config:executable}",
+      "device": "${config:device}",
+      "preLaunchTask": "Сборка: собрать (активный пресет)",
+      "runToEntryPoint": "main",
+      "svdFile": "${config:svdFile}",
+      "interface": "swd"
+    },
+    {
+      "name": "Эмуляция: Renode (GDB)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "external",
+      "cwd": "${workspaceFolder}",
+      "executable": "${config:executable}",
+      "gdbTarget": "localhost:3334",
+      "preLaunchTask": "Эмуляция: Renode с GDB (порт 3334)",
+      "overrideLaunchCommands": [],
+      "overrideRestartCommands": [
+        "monitor machine Reset"
+      ],
+      "runToEntryPoint": "main"
+    }
+  ]
+}

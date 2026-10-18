@@ -32,6 +32,8 @@ jobs:
         run: clang-format --version && clang-format --dry-run --Werror src/*.c src/*.cpp src/*.h
       - name: HIL scenario style (stm32-gdbtest rules)
         run: python3 modules/stm32-gdbtest/tests/host/test_scenario_style.py hil/common/tests/board/*.py
+      - name: VS Code tasks and launch configurations reference existing presets, targets and files
+        run: python3 tools/check_vscode.py
 
   build:
     runs-on: ubuntu-24.04
@@ -64,8 +66,8 @@ jobs:
           echo "${XPACK_SHA256}  /tmp/xpack.tar.gz" | sha256sum -c -
           sudo tar -xzf /tmp/xpack.tar.gz -C /opt
 
-      - name: Install Ninja
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ninja-build
+      - name: Install Ninja and GDB with Python (addresses for stm32-diag-record)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ninja-build gdb-multiarch
 
       - name: Install Renode (SHA-256 verified)
         run: |
@@ -85,6 +87,16 @@ jobs:
       - name: Renode smoke test without a board
         run: ctest --preset "${{ matrix.board }}-debug-emulator"
 
+      - name: Diagnostics recording from Renode (stm32-diag-record, emulate-monitor)
+        run: |
+          build="build/${{ matrix.board }}-debug"
+          cmake --build "$build" --target emulate-monitor > "$build/renode-run/monitor.log" 2>&1 &
+          for i in $(seq 90); do grep -q "Machine started" "$build/renode-run/monitor.log" && break; sleep 1; done
+          python3 -B .claude/skills/stm32-diag-record/scripts/record_diag.py --backend renode \
+            --elf "$build/stm32_skills_probe.elf" --fields tools/diag-fields.toml \
+            --record mcap --seconds 3 --out "$build/diag/renode.mcap"
+          pkill -f "renode.*--port" || true
+
       - name: HIL without a board (traceability, prepare)
         run: |
           cmake --preset "${{ matrix.board }}-hil"
@@ -102,5 +114,7 @@ jobs:
             build/${{ matrix.board }}-*/stm32_skills_probe.hex
             build/${{ matrix.board }}-*/stm32_skills_probe.map
             build/${{ matrix.board }}-debug/renode-smoke/
+            build/${{ matrix.board }}-debug/renode-run/
+            build/${{ matrix.board }}-debug/diag/
             build/${{ matrix.board }}-hil/hwtest/
           if-no-files-found: warn

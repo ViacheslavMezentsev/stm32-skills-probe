@@ -101,14 +101,38 @@ git submodule update --init                     # stm32-gdbtest для HIL
 cmake --preset f411ce-debug && cmake --build --preset f411ce-debug
 ctest --preset f411ce-debug-emulator            # Renode: лог, кадры, команда ping, чтение RAM
 cmake --build --preset f411ce-debug --target emulate-debug   # Renode с GDB-сервером :3334
+cmake --build --preset f411ce-debug --target emulate-monitor # зонд работает в Renode, монитор :1234
 cmake --preset f411ce-hil && cmake --build --preset f411ce-hil
 ctest --preset f411ce-hil-host                  # без платы: traceability и prepare.*
 ctest --preset f411ce-hil-hw                    # на плате, нужен hil/F411CE/stands/local.toml
 ```
 
 Пресеты есть для `f411ce`, `f401cc` и `f103c8`. CI (`.github/workflows/ci.yml`) собирает все платы,
-прогоняет зонд в Renode и HIL-проверки без платы. Эмулятор подтверждает только логику и раскладку, не время
-и не работу на железе.
+прогоняет зонд в Renode, записывает диагностику из Renode и выполняет HIL-проверки без платы, а
+`tools/check_vscode.py` сверяет `.vscode` с пресетами, целями и файлами. Эмулятор подтверждает только логику
+и раскладку, не время и не работу на железе.
+
+## VS Code
+
+`.vscode/` — по образцу stm32-hwtest-bluepill: CMake Tools с пресетами, Cortex-Debug, задачи по группам.
+Пути к тулчейну и параметры отладчика — в `.vscode/settings.json` (`toolchain`, `device`, `targetFamily`,
+`svdFile`); `device` и `targetFamily` задаются под плату активного пресета.
+
+| Группа | Что делает | Плата |
+| --- | --- | --- |
+| Сборка | сборка активного пресета, конфигурирование debug, release, hil для выбранной платы | нет |
+| Проверка | CTest активной сборки с метками `emu` и `host` | нет |
+| Эмуляция | стартовый лог в Renode; Renode с GDB (:3334) для конфигурации «Эмуляция: Renode (GDB)»; Renode с монитором (:1234) | нет |
+| Диагностика | запись полей зонда навыком stm32-diag-record (копия в `.claude/skills/`) в mcap или bag: из Renode или с платы через OpenOCD | по задаче |
+| Прошивка | OpenOCD или STM32CubeProgrammer через ST-Link | да |
+| HIL | по каждой плате: сборка, doctor, подготовка без платы, все тесты, один тест | да, кроме подготовки |
+
+Конфигурации отладки: плата через OpenOCD, ST-LINK GDB Server или J-Link и Renode через GDB.
+
+Запись без платы: задача «Эмуляция: Renode с монитором (порт 1234)», затем «Диагностика: записать из Renode
+(mcap, 10 с)». Файл появляется в `build/<пресет>/diag/`, поля — `tools/diag-fields.toml` (без `svd:`, SVD не
+нужен). Время в Renode виртуальное и идёт медленнее реального, интервалы смотрите по `/probe/tick_ms`.
+Нужны Python ≥ 3.11 и GDB с Python (xPack `arm-none-eabi-gdb-py3` из `toolchain` или `gdb-multiarch`).
 
 ## HIL-сценарии stm32-gdbtest
 
@@ -117,7 +141,8 @@ ctest --preset f411ce-hil-hw                    # на плате, нужен hi
 `board.toml`, локальный `stands/local.toml`), примеры стендов — `templates/`, общие параметры — `api.toml`.
 Сценарии: `HW_BOOT`, `HW_BOARD_PROFILE`, `HW_FRAMES`, `HW_SAMPLE_HOOK`, `HW_COMPUTE_RETURN`, `HW_WORK`,
 `HW_RTT_BLOCK` — требования в `hil/common/tests/requirements.md`. Навыки stm32-gdbtest скопированы в
-`.claude/skills/` из подмодуля (обновляются вместе с ним).
+`.claude/skills/` из подмодуля (обновляются вместе с ним); там же копия stm32-diag-record из
+demo-stm32-skills (обновляется вместе с его выпусками).
 
 ## Связь с планом исследований
 

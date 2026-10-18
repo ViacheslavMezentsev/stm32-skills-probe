@@ -1,0 +1,673 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cmake",
+      "label": "Сборка: собрать (активный пресет)",
+      "command": "build",
+      "preset": "${command:cmake.activeBuildPresetName}",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Сборка: конфигурировать debug…",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "${input:board}-debug"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Сборка: конфигурировать release…",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "${input:board}-release"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Сборка: конфигурировать hil…",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "${input:board}-hil"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Проверка: CTest (активная сборка, без платы)",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--test-dir",
+        "${command:cmake.buildDirectory}",
+        "-L",
+        "^(host|emu)$",
+        "--no-tests=error",
+        "--output-on-failure"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "Сборка: собрать (активный пресет)"
+    },
+    {
+      "label": "Эмуляция: стартовый лог (Renode)",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "${command:cmake.buildDirectory}",
+        "--target",
+        "emulate"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Эмуляция: Renode с GDB (порт 3334)",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "${command:cmake.buildDirectory}",
+        "--target",
+        "emulate-debug"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": "^(.*):(\\d+):(\\d+): (.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "message": 4
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "GDB server with all CPUs started on port"
+        }
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Эмуляция: Renode с монитором (порт 1234)",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "${command:cmake.buildDirectory}",
+        "--target",
+        "emulate-monitor"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": "^(.*):(\\d+):(\\d+): (.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "message": 4
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Machine started"
+        }
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Диагностика: doctor (Renode)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:diag.skill}/scripts/record_diag.py",
+        "--elf",
+        "${command:cmake.buildDirectory}/stm32_skills_probe.elf",
+        "--fields",
+        "${config:diag.fields}",
+        "--svd=${config:svdFile}",
+        "--backend",
+        "renode",
+        "--port",
+        "${config:diag.renodePort}",
+        "--doctor"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "STM32_TOOLCHAIN_PATH": "${config:toolchain}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Диагностика: записать из Renode (mcap, 10 с)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:diag.skill}/scripts/record_diag.py",
+        "--elf",
+        "${command:cmake.buildDirectory}/stm32_skills_probe.elf",
+        "--fields",
+        "${config:diag.fields}",
+        "--svd=${config:svdFile}",
+        "--backend",
+        "renode",
+        "--port",
+        "${config:diag.renodePort}",
+        "--record",
+        "mcap",
+        "--seconds",
+        "10"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "STM32_TOOLCHAIN_PATH": "${config:toolchain}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Диагностика: doctor (плата)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:diag.skill}/scripts/record_diag.py",
+        "--elf",
+        "${command:cmake.buildDirectory}/stm32_skills_probe.elf",
+        "--fields",
+        "${config:diag.fields}",
+        "--svd=${config:svdFile}",
+        "--target",
+        "target/${config:targetFamily}.cfg",
+        "--doctor"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "STM32_TOOLCHAIN_PATH": "${config:toolchain}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Диагностика: записать с платы (mcap, 30 с)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:diag.skill}/scripts/record_diag.py",
+        "--elf",
+        "${command:cmake.buildDirectory}/stm32_skills_probe.elf",
+        "--fields",
+        "${config:diag.fields}",
+        "--svd=${config:svdFile}",
+        "--target",
+        "target/${config:targetFamily}.cfg",
+        "--record",
+        "mcap",
+        "--seconds",
+        "30"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "STM32_TOOLCHAIN_PATH": "${config:toolchain}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Диагностика: записать с платы (bag, 30 с)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:diag.skill}/scripts/record_diag.py",
+        "--elf",
+        "${command:cmake.buildDirectory}/stm32_skills_probe.elf",
+        "--fields",
+        "${config:diag.fields}",
+        "--svd=${config:svdFile}",
+        "--target",
+        "target/${config:targetFamily}.cfg",
+        "--record",
+        "bag",
+        "--seconds",
+        "30"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "STM32_TOOLCHAIN_PATH": "${config:toolchain}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Прошивка: OpenOCD / ST-Link",
+      "type": "process",
+      "command": "openocd",
+      "args": [
+        "-f",
+        "interface/stlink.cfg",
+        "-f",
+        "target/${config:targetFamily}.cfg",
+        "-c",
+        "program {${command:cmake.buildDirectory}/stm32_skills_probe.elf} verify reset exit"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "Сборка: собрать (активный пресет)"
+    },
+    {
+      "label": "Прошивка: STM32CubeProgrammer / ST-Link",
+      "type": "process",
+      "command": "STM32_Programmer_CLI",
+      "args": [
+        "-c",
+        "port=SWD",
+        "-w",
+        "${command:cmake.buildDirectory}/stm32_skills_probe.hex",
+        "-v",
+        "-rst"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "Сборка: собрать (активный пресет)"
+    },
+    {
+      "label": "HIL: F411CE — конфигурировать",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "f411ce-hil"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "HIL: F411CE — собрать",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "--preset",
+        "f411ce-hil"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F411CE — конфигурировать"
+    },
+    {
+      "label": "HIL: F411CE — doctor (локальный стенд)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+        "doctor",
+        "--gdb",
+        "${config:toolchain}/bin/arm-none-eabi-gdb-py3",
+        "--stand",
+        "hil/F411CE/stands/local.toml"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "windows": {
+        "args": [
+          "-B",
+          "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+          "doctor",
+          "--gdb",
+          "${config:toolchain}/bin/arm-none-eabi-gdb-py3.exe",
+          "--stand",
+          "hil/F411CE/stands/local.toml"
+        ]
+      }
+    },
+    {
+      "label": "HIL: F411CE — подготовка без платы",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "f411ce-hil-host"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F411CE — собрать"
+    },
+    {
+      "label": "HIL: F411CE — все тесты (локальная плата)",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "f411ce-hil-hw"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F411CE — собрать"
+    },
+    {
+      "label": "HIL: F411CE — один тест (локальная плата)…",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+        "run",
+        "--session",
+        "build/f411ce-hil/hwtest/session.json",
+        "--identity-policy",
+        "strict",
+        "--test",
+        "${input:test}",
+        "--stand",
+        "hil/F411CE/stands/local.toml"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F411CE — собрать"
+    },
+    {
+      "label": "HIL: F401CC — конфигурировать",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "f401cc-hil"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "HIL: F401CC — собрать",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "--preset",
+        "f401cc-hil"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F401CC — конфигурировать"
+    },
+    {
+      "label": "HIL: F401CC — doctor (локальный стенд)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+        "doctor",
+        "--gdb",
+        "${config:toolchain}/bin/arm-none-eabi-gdb-py3",
+        "--stand",
+        "hil/F401CC/stands/local.toml"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "windows": {
+        "args": [
+          "-B",
+          "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+          "doctor",
+          "--gdb",
+          "${config:toolchain}/bin/arm-none-eabi-gdb-py3.exe",
+          "--stand",
+          "hil/F401CC/stands/local.toml"
+        ]
+      }
+    },
+    {
+      "label": "HIL: F401CC — подготовка без платы",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "f401cc-hil-host"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F401CC — собрать"
+    },
+    {
+      "label": "HIL: F401CC — все тесты (локальная плата)",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "f401cc-hil-hw"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F401CC — собрать"
+    },
+    {
+      "label": "HIL: F401CC — один тест (локальная плата)…",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+        "run",
+        "--session",
+        "build/f401cc-hil/hwtest/session.json",
+        "--identity-policy",
+        "strict",
+        "--test",
+        "${input:test}",
+        "--stand",
+        "hil/F401CC/stands/local.toml"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F401CC — собрать"
+    },
+    {
+      "label": "HIL: F103C8 — конфигурировать",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "f103c8-hil"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "HIL: F103C8 — собрать",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "--preset",
+        "f103c8-hil"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F103C8 — конфигурировать"
+    },
+    {
+      "label": "HIL: F103C8 — doctor (локальный стенд)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+        "doctor",
+        "--gdb",
+        "${config:toolchain}/bin/arm-none-eabi-gdb-py3",
+        "--stand",
+        "hil/F103C8/stands/local.toml"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "windows": {
+        "args": [
+          "-B",
+          "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+          "doctor",
+          "--gdb",
+          "${config:toolchain}/bin/arm-none-eabi-gdb-py3.exe",
+          "--stand",
+          "hil/F103C8/stands/local.toml"
+        ]
+      }
+    },
+    {
+      "label": "HIL: F103C8 — подготовка без платы",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "f103c8-hil-host"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F103C8 — собрать"
+    },
+    {
+      "label": "HIL: F103C8 — все тесты (локальная плата)",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "f103c8-hil-hw"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F103C8 — собрать"
+    },
+    {
+      "label": "HIL: F103C8 — один тест (локальная плата)…",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-B",
+        "${config:hil.gdbtest}/stm32_gdbtest/cli.py",
+        "run",
+        "--session",
+        "build/f103c8-hil/hwtest/session.json",
+        "--identity-policy",
+        "strict",
+        "--test",
+        "${input:test}",
+        "--stand",
+        "hil/F103C8/stands/local.toml"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "dependsOn": "HIL: F103C8 — собрать"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "board",
+      "type": "pickString",
+      "description": "Профиль сборки",
+      "options": [
+        "f411ce",
+        "f401cc",
+        "f103c8"
+      ],
+      "default": "f411ce"
+    },
+    {
+      "id": "test",
+      "type": "pickString",
+      "description": "Сценарий",
+      "options": [
+        "HW_BOOT",
+        "HW_BOARD_PROFILE",
+        "HW_FRAMES",
+        "HW_SAMPLE_HOOK",
+        "HW_COMPUTE_RETURN",
+        "HW_WORK",
+        "HW_RTT_BLOCK"
+      ],
+      "default": "HW_BOOT"
+    }
+  ]
+}
