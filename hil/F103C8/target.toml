@@ -1,4 +1,4 @@
-# Описание MCU для stm32-gdbtest (схема 2): обычная Blue Pill, светодиод PC13 (горит при 0).
+# Описание MCU для stm32-gdbtest (схема 2): STM32F103C8 на Blue Pill (из stm32-hwtest-bluepill).
 # Flash 64 КиБ. На многих платах в кристалле фактически 128 КиБ (регистр размера Flash показывает 128): identity даёт предупреждение, не ошибку, даже при strict.
 schema = 2
 name = "f103c8"

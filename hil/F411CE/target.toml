@@ -1,3 +1,4 @@
+# Описание MCU для stm32-gdbtest (схема 2): F411CE на WeAct BlackPill (из stm32-hwtest-blackpill).
 schema = 2
 name = "f411ce"
 mcu = "STM32F411CEU6"

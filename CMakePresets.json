@@ -186,7 +186,7 @@
     {
       "name": "f411ce-hil-hw",
       "configurePreset": "f411ce-hil",
-      "displayName": "F411CE: сценарии на плате (hil/stands/f411ce.local.toml)",
+      "displayName": "F411CE: сценарии на плате (hil/F411CE/stands/local.toml)",
       "filter": {
         "include": {
           "label": "^hw$"
@@ -200,7 +200,8 @@
         "jobs": 1
       },
       "environment": {
-        "STM32_GDBTEST_STAND": "${sourceDir}/hil/stands/f411ce.local.toml"
+        "STM32_GDBTEST_STAND": "${sourceDir}/hil/F411CE/stands/local.toml",
+        "STM32_GDBTEST_IDENTITY_POLICY": "strict"
       }
     },
     {
@@ -243,7 +244,7 @@
     {
       "name": "f401cc-hil-hw",
       "configurePreset": "f401cc-hil",
-      "displayName": "F401CC: сценарии на плате (hil/stands/f401cc.local.toml)",
+      "displayName": "F401CC: сценарии на плате (hil/F401CC/stands/local.toml)",
       "filter": {
         "include": {
           "label": "^hw$"
@@ -257,7 +258,8 @@
         "jobs": 1
       },
       "environment": {
-        "STM32_GDBTEST_STAND": "${sourceDir}/hil/stands/f401cc.local.toml"
+        "STM32_GDBTEST_STAND": "${sourceDir}/hil/F401CC/stands/local.toml",
+        "STM32_GDBTEST_IDENTITY_POLICY": "strict"
       }
     },
     {
@@ -300,7 +302,7 @@
     {
       "name": "f103c8-hil-hw",
       "configurePreset": "f103c8-hil",
-      "displayName": "F103C8: сценарии на плате (hil/stands/f103c8.local.toml)",
+      "displayName": "F103C8: сценарии на плате (hil/F103C8/stands/local.toml)",
       "filter": {
         "include": {
           "label": "^hw$"
@@ -314,7 +316,8 @@
         "jobs": 1
       },
       "environment": {
-        "STM32_GDBTEST_STAND": "${sourceDir}/hil/stands/f103c8.local.toml"
+        "STM32_GDBTEST_STAND": "${sourceDir}/hil/F103C8/stands/local.toml",
+        "STM32_GDBTEST_IDENTITY_POLICY": "strict"
       }
     }
   ]

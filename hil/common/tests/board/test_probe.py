@@ -17,7 +17,8 @@ def frames(t):
     second = t.read("probe_telemetry", fields=("frames", "tick"))
     t.check("frame numbers are consecutive", second["frames"], first["frames"] + 1)
     period, tolerance = schedule["frame_period_ms"], schedule["tick_tolerance"]
-    t.check("frames are one period apart", second["tick"] - first["tick"], within(period - tolerance, period + tolerance))
+    interval = within(period - tolerance, period + tolerance)
+    t.check("frames are one period apart", second["tick"] - first["tick"], interval)
     t.record("frames", {"first": first, "second": second})
 
 
@@ -54,6 +55,7 @@ def work(t):
     t.check("iterations from the schedule", t.evaluate("iterations"), schedule["work_iterations"])
     result = t.finish()
     cycles = result["return_value"]
+
     # Each iteration is at least one nop and a branch; the bound only rejects a stopped counter.
     t.check("DWT counted the section", cycles, within(schedule["work_iterations"], schedule["work_iterations"] * 20))
     t.check("telemetry keeps the cycles", t.evaluate("probe_telemetry.work_cycles"), cycles)
@@ -69,7 +71,8 @@ def rtt_block(t):
     block = t.symbol("_SEGGER_RTT")
     identifier = bytes(t.memory(block["address"], 16)).split(b"\0", 1)[0].decode("ascii")
     t.check("RTT identifier", identifier, rtt["id"])
-    t.check("one up and one down buffer", t.read("_SEGGER_RTT", fields=("max_up", "max_down")), {"max_up": 1, "max_down": 1})
+    buffers = t.read("_SEGGER_RTT", fields=("max_up", "max_down"))
+    t.check("one up and one down buffer", buffers, {"max_up": 1, "max_down": 1})
     t.check("up buffer size", t.evaluate("_SEGGER_RTT.up[0].size"), rtt["up_size"])
     t.check("down buffer size", t.evaluate("_SEGGER_RTT.down[0].size"), rtt["down_size"])
     ram = within(0x20000000, 0x20000000 + board["ram_kib"] * 1024 - 1)

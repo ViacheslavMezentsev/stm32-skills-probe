@@ -4,6 +4,8 @@ EN: Probe startup: no fault, the clock from the board data, the run profile matc
 """
 from stm32_gdbtest import case, one_of, within
 
+
+# SRAM starts here on every supported board; its size comes from the board data (ram_kib).
 SRAM_START = 0x20000000
 
 
@@ -12,13 +14,16 @@ SRAM_START = 0x20000000
 def boot(t):
     clock = t.profile.data["board"]["clock"]
     t.reach("probe_loop")
+
+    # The boot log is written and no handler caught a fault on the way to the main loop.
     t.check([
         ("no platform fault", "platform_fault", 0),
         ("no unexpected exception", "probe_fault_vector", 0),
-        ("probe_state set after the boot log", "probe_state", 0xA5),
+        ("probe_state set after the boot log", "probe_state", 0xA5)
     ])
     core_hz = t.evaluate("SystemCoreClock")
     t.check("core clock is HSE or HSI", core_hz, one_of(clock["hse_hz"], clock["hsi_hz"]))
+
     # Flags bit 0 is HSE, bit 1 is an HSE start failure: exactly one source is reported.
     flags = t.evaluate("probe_telemetry.flags")
     t.check("telemetry flags agree with the clock", flags & 1, int(core_hz == clock["hse_hz"] and (flags & 2) == 0))

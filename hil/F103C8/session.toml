@@ -1,11 +1,11 @@
 # Конфигурация прогона HIL зонда для F103C8 (SESSION_CONFIG в cmake/hil.cmake). Пути — относительно файла.
 [config]
-target = "../profiles/f103c8.toml"
+target = "target.toml"
 api = "../api.toml"
 
 # Файлы данных проекта: t.profile.data["board"].
 [data]
-board = "../boards/f103c8.toml"
+board = "board.toml"
 
 # Неизменяемые свидетельства каждой попытки DDTT.
 [results]

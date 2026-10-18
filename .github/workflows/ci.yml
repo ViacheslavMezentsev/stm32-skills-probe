@@ -26,8 +26,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: clang-format (src/ only; cmsis/ is vendor code)
         run: clang-format --version && clang-format --dry-run --Werror src/*.c src/*.cpp src/*.h
+      - name: HIL scenario style (stm32-gdbtest rules)
+        run: python3 modules/stm32-gdbtest/tests/host/test_scenario_style.py hil/common/tests/board/*.py
 
   build:
     runs-on: ubuntu-24.04

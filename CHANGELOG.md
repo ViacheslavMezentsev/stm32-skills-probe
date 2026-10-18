@@ -5,6 +5,12 @@
 
 ## [Unreleased]
 
+### Изменено
+
+- Раскладка `hil/` переведена на образец stm32-hwtest-bluepill: `hil/common/tests/` (сценарии, требования,
+  контракты), `hil/<ПЛАТА>/` (`session.toml`, `target.toml`, `board.toml`, локальный `stands/local.toml`),
+  `hil/templates/` (примеры стендов OpenOCD, ST-LINK GDB Server, J-Link), `hil/README.md`.
+
 ### Добавлено
 
 - Опция `PROBE_EXIT_MS` (вместе с `PROBE_LOG_SEMIHOSTING`): семихостинг `SYS_EXIT` через заданное время, чтобы

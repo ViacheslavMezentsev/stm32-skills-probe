@@ -1,12 +1,16 @@
 # =============================================================================
 # HIL-сценарии stm32-gdbtest (метод DDTT), выключены по умолчанию.
-# Включение: пресеты *-hil (-DPROBE_HIL=ON). Сценарии и требования общие (hil/tests); плату описывает
-# конфигурация прогона hil/sessions/<плата>.toml. Устроено как в stm32-hwtest-blackpill.
+# Включение: пресеты *-hil (-DPROBE_HIL=ON). Сценарии и требования общие (hil/common/tests); плату описывает
+# конфигурация прогона hil/<BOARD>/session.toml: описание MCU (target.toml), общий hil/api.toml и файл
+# данных платы (board.toml). Устроено как в stm32-hwtest-bluepill.
 # =============================================================================
 option(PROBE_HIL "Hardware scenarios via stm32-gdbtest" OFF)
 
 if(PROBE_HIL)
-    set(HIL_SESSION "${CMAKE_SOURCE_DIR}/hil/sessions/${PROBE_PROFILE}.toml")
+    set(HIL_SESSION "${CMAKE_SOURCE_DIR}/hil/${BOARD}/session.toml")
+    if(NOT EXISTS "${HIL_SESSION}")
+        message(FATAL_ERROR "No HIL run configuration for BOARD=${BOARD}: ${HIL_SESSION}")
+    endif()
     set(STM32_GDBTEST_SOURCE_DIR "${CMAKE_SOURCE_DIR}/modules/stm32-gdbtest" CACHE PATH "stm32-gdbtest checkout")
     if(NOT EXISTS "${STM32_GDBTEST_SOURCE_DIR}/stm32_gdbtest/cmake/STM32GDBTest.cmake")
         message(FATAL_ERROR "stm32-gdbtest not found: ${STM32_GDBTEST_SOURCE_DIR}\nRun: git submodule update --init")
@@ -30,7 +34,7 @@ if(PROBE_HIL)
     include(CTest)
     include("${STM32_GDBTEST_SOURCE_DIR}/stm32_gdbtest/cmake/STM32GDBTest.cmake")
     stm32_gdbtest_attach(${PROJECT_NAME}
-        PROFILE_DIR "${CMAKE_SOURCE_DIR}/hil"
+        PROFILE_DIR "${CMAKE_SOURCE_DIR}/hil/common"
         SESSION_CONFIG "${HIL_SESSION}"
         MANIFEST_INPUTS
             "${CMAKE_BINARY_DIR}/probe.ld"

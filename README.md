@@ -103,7 +103,7 @@ ctest --preset f411ce-debug-emulator            # Renode: лог, кадры, к
 cmake --build --preset f411ce-debug --target emulate-debug   # Renode с GDB-сервером :3334
 cmake --preset f411ce-hil && cmake --build --preset f411ce-hil
 ctest --preset f411ce-hil-host                  # без платы: traceability и prepare.*
-ctest --preset f411ce-hil-hw                    # на плате, нужен hil/stands/f411ce.local.toml
+ctest --preset f411ce-hil-hw                    # на плате, нужен hil/F411CE/stands/local.toml
 ```
 
 Пресеты есть для `f411ce`, `f401cc` и `f103c8`. CI (`.github/workflows/ci.yml`) собирает все платы,
@@ -112,10 +112,11 @@ ctest --preset f411ce-hil-hw                    # на плате, нужен hi
 
 ## HIL-сценарии stm32-gdbtest
 
-`hil/` устроен как в stm32-hwtest-blackpill: `sessions/` (конфигурация прогона на плату), `profiles/`
-(описания MCU), `boards/` (данные платы), `api.toml`, `tests/` (сценарии, требования), `stands/` (примеры).
+`hil/` устроен как в stm32-hwtest-bluepill ([hil/README.md](hil/README.md)): общие сценарии и требования —
+`common/tests/`, по каталогу на плату — `F411CE/`, `F401CC/`, `F103C8/` (`session.toml`, `target.toml`,
+`board.toml`, локальный `stands/local.toml`), примеры стендов — `templates/`, общие параметры — `api.toml`.
 Сценарии: `HW_BOOT`, `HW_BOARD_PROFILE`, `HW_FRAMES`, `HW_SAMPLE_HOOK`, `HW_COMPUTE_RETURN`, `HW_WORK`,
-`HW_RTT_BLOCK` — требования в `hil/tests/requirements.md`. Навыки stm32-gdbtest скопированы в
+`HW_RTT_BLOCK` — требования в `hil/common/tests/requirements.md`. Навыки stm32-gdbtest скопированы в
 `.claude/skills/` из подмодуля (обновляются вместе с ним).
 
 ## Связь с планом исследований

@@ -1,0 +1,8 @@
+# ST-Link через OpenOCD (0.11+; например, scoop install openocd), Windows.
+# Скопировать в hil/<ПЛАТА>/stands/local.toml (F411CE, F401CC, F103C8) (не коммитится) и заменить значения.
+[probe]
+backend = "openocd"
+serial = "REPLACE_WITH_STLINK_SERIAL"
+executable = "openocd"              # из PATH или полный путь к openocd.exe
+speed_khz = 1000
+flash = "if-different"

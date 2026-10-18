@@ -1,7 +1,9 @@
 build/
 modules/*/
 !modules/.gitkeep
-hil/stands/*.local.toml
+# Стенды плат (серийные номера пробников); примеры — hil/templates.
+hil/*/stands/local.toml
+hil/*/stands/remote.toml
 *.local.toml
 __pycache__/
 *.py[cod]
