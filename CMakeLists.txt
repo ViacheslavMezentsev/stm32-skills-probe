@@ -5,7 +5,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/arm-gcc.cmake")
 endif()
 
-project(stm32_skills_probe VERSION 0.1.0 LANGUAGES C CXX ASM)
+project(stm32_skills_probe VERSION 0.2.0 LANGUAGES C CXX ASM)
 
 # Python ищется сначала по PATH, а не в реестре Windows (как в stm32-hwtest-*).
 set(Python3_FIND_REGISTRY LAST)

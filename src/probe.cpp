@@ -146,6 +146,13 @@ extern "C" void probe_loop( void )
         next_frame_ms = now + probe_frame_period_ms;
         probe_emit_frame();
     }
+#if PROBE_EXIT_MS
+    if ( now >= PROBE_EXIT_MS )
+    {
+        sys_log( "exit: %u ms", now );
+        probe_semihosting_exit();
+    }
+#endif
     if ( probe_work_period_ms && ( int32_t ) ( now - next_work_ms ) >= 0 )
     {
         next_work_ms = now + probe_work_period_ms;

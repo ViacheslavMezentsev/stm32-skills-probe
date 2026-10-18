@@ -26,6 +26,9 @@ extern volatile uint32_t probe_log_lines; /* выведено строк */
    на Cortex-M одного размера), поэтому uint32_t передаётся как есть; проверка printf не включается. */
 void sys_log( const char* format, ... );
 
+/* Семихостинг SYS_EXIT (ADP_Stopped_ApplicationExit); без PROBE_LOG_SEMIHOSTING ничего не делает. */
+void probe_semihosting_exit( void );
+
 #ifdef __cplusplus
 }
 #endif

@@ -43,6 +43,12 @@ option(PROBE_HSE "Clock from the board crystal (HSE) without PLL; HSI fallback" 
 # Каналы журнала: UART и RTT (без отладчика безвредны) всегда, ITM пишет, только если отладчик его
 # включил; семихостинг без отладчика останавливает ядро, поэтому только по выбору.
 option(PROBE_LOG_SEMIHOSTING "Duplicate the log over ARM semihosting (needs a debugger or emulator)" OFF)
+# Завершение через семихостинг (SYS_EXIT) через заданное число миллисекунд: QEMU останавливается сам,
+# Renode останавливает ядро. Нужно маршрутам эмуляции, которые ждут конца прогона (stm32-renode-emulator).
+set(PROBE_EXIT_MS 0 CACHE STRING "Semihosting SYS_EXIT after this many ms (0: never; needs PROBE_LOG_SEMIHOSTING)")
+if(PROBE_EXIT_MS AND NOT PROBE_LOG_SEMIHOSTING)
+    message(FATAL_ERROR "PROBE_EXIT_MS needs PROBE_LOG_SEMIHOSTING=ON: without a debugger SYS_EXIT stops the core")
+endif()
 
 # Номер сборки и ревизия из окружения CI (иначе 0): попадают в секцию .fw_version.
 set(PROBE_BUILD "$ENV{PROBE_BUILD}")
@@ -87,7 +93,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     PROBE_BUILD=${PROBE_BUILD}
     PROBE_REVISION=${PROBE_REVISION}
     $<$<BOOL:${PROBE_HSE}>:PROBE_HSE=1>
-    $<$<BOOL:${PROBE_LOG_SEMIHOSTING}>:PROBE_LOG_SEMIHOSTING=1>)
+    $<$<BOOL:${PROBE_LOG_SEMIHOSTING}>:PROBE_LOG_SEMIHOSTING=1>
+    PROBE_EXIT_MS=${PROBE_EXIT_MS})
 
 set(PROBE_ARCH -mcpu=${PROBE_CORE} -mthumb -mfloat-abi=soft)
 target_compile_options(${PROJECT_NAME} PRIVATE
